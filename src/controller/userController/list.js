@@ -15,7 +15,6 @@ export const userList = (req, res) => {
         });
         index++;
       });
-      console.log(userArray);
       return res.status(200).json({
         userArray,
       });

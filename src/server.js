@@ -8,39 +8,23 @@ import connection from "./db";
 import chatRouter from "./router/chatRouter";
 
 const app = express();
-const PORT = 9080;
+const PORT = 9000;
 const server = http.createServer(app);
-const io = SocketIO(server);
+const io = SocketIO(server, {
+  cors: {
+    origin: true,
+  },
+});
 
-app.get("/chat", checkToken, (req, res) => {
+app.get("/", (req, res) => {
+  res.send("");
+});
+
+let user_name;
+
+app.post("/chat", checkToken, (req, res) => {
   const { name } = req.user;
-  io.on("connection", (socket) => {
-    socket.on("enter_room", (data, done) => {
-      socket.join(data.roomName);
-      socket.to(data.roomName).emit("enter_message", name);
-      done();
-    });
-    socket.on("leave_room", (data, done) => {
-      socket.leave(data.roomName);
-      socket.to(data.roomName).emit("leave_message", name);
-      done();
-    });
-    socket.on("disconnecting", () => {
-      socket.rooms.forEach((room) => socket.to(room).emit("bye", name));
-    });
-    socket.on("send_message", (data) => {
-      let room = data.roomName;
-      socket.to(room).emit("new_message", data.msg);
-      connection.query(
-        "insert into chat(roomName, name, msg) value(?, ?, ?)",
-        [room, data.name, data.msg],
-        (err, result) => {
-          if (err) console.log(err);
-          console.log("Data insert ok!");
-        }
-      );
-    });
-  });
+  user_name = name;
 });
 
 app.use(express.json());
@@ -50,6 +34,31 @@ app.use(cors());
 app.use("/user", userRouter);
 app.use("/post", chatRouter);
 
-app.listen(PORT, () => {
+io.on("connection", (socket) => {
+  console.log("connect");
+  socket.on("come_in", (data, done) => {
+    socket.join(data.roomName);
+    socket.to(data.roomName).emit("user_in", user_name);
+    done();
+  });
+  socket.on("come_out", (data) => {
+    socket.leave(data.roomName);
+    socket.to(data.roomName).emit("user_out", user_name);
+  });
+  socket.on("send_message", (data, done) => {
+    connection.query(
+      "insert into chat(room, name, msg) value(?, ?, ?)",
+      [data.roomName, data.name, data.msg],
+      (err, result) => {
+        if (err) console.log(err);
+        console.log("insert success!!");
+      }
+    );
+    socket.to(data.roomName).emit("to_message", data.name, data.msg);
+    done();
+  });
+});
+
+server.listen(PORT, () => {
   console.log(`server : http://localhost:${PORT}`);
 });
