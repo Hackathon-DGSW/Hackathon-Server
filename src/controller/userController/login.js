@@ -6,6 +6,7 @@ export const userLogin = async (req, res) => {
   try {
     let query = "select * from user_info where user_id='" + id + "'";
     connection.query(query, (err, result) => {
+      if (err) console.log(err);
       const user = {
         id: result[0].user_id,
         pw: result[0].user_pw,
@@ -39,6 +40,7 @@ export const userLogin = async (req, res) => {
           issuer: "hackathon",
         }
       );
+      console.log("login ok!");
       return res.status(200).json({
         status: 200,
         message: "로그인 성공!",

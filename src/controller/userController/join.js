@@ -4,6 +4,12 @@ export const userJoin = async (req, res) => {
   const { name, id, password, password2, major, job } = req.body;
   let idid;
   try {
+    if (id === undefined || null) {
+      return res.status(400).json({
+        status: 400,
+        message: "id가 입력되지 않았습니다.",
+      });
+    }
     if (password !== password2) {
       return res.status(400).json({
         status: 400,
@@ -31,7 +37,8 @@ export const userJoin = async (req, res) => {
             job +
             "')";
           connection.query(joinQuery, (err, result) => {
-            if (err) console.log(err);
+            if (err) return console.log(err);
+            console.log("join ok!");
             return res.status(200).json({
               status: 200,
               message: "회원가입 성공!",

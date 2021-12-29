@@ -3,7 +3,7 @@ import connection from "../../db";
 export const userProfile = async (req, res) => {
   const { name, major, id, job } = req.user;
   try {
-    return res.status(299).json({
+    return res.status(200).json({
       status: 200,
       name,
       major,

@@ -4,6 +4,8 @@ import http from "http";
 import SocketIO from "socket.io";
 import { checkToken } from "./middleware";
 import cors from "cors";
+import connection from "./db";
+import chatRouter from "./router/chatRouter";
 
 const app = express();
 const PORT = 9080;
@@ -13,22 +15,30 @@ const io = SocketIO(server);
 app.get("/chat", checkToken, (req, res) => {
   const { name } = req.user;
   io.on("connection", (socket) => {
-    console.log("connecting socketio");
     socket.on("enter_room", (data, done) => {
-      socket.join(data); //room join
-      socket.to(data).emit("enter_user", name);
-      done(); //callback function
-    });
-    socket.on("leave_room", () => {
-      socket.leave(data); //room leave
-      socket.rooms.forEach((room) => {
-        socket.to(room).emit("leave_user", name);
-      });
-      done(); //callback function
-    });
-    socket.on("new_message", (data, msg, done) => {
-      socket.to(data).emit("send_message", data, msg);
+      socket.join(data.roomName);
+      socket.to(data.roomName).emit("enter_message", name);
       done();
+    });
+    socket.on("leave_room", (data, done) => {
+      socket.leave(data.roomName);
+      socket.to(data.roomName).emit("leave_message", name);
+      done();
+    });
+    socket.on("disconnecting", () => {
+      socket.rooms.forEach((room) => socket.to(room).emit("bye", name));
+    });
+    socket.on("send_message", (data) => {
+      let room = data.roomName;
+      socket.to(room).emit("new_message", data.msg);
+      connection.query(
+        "insert into chat(roomName, name, msg) value(?, ?, ?)",
+        [room, data.name, data.msg],
+        (err, result) => {
+          if (err) console.log(err);
+          console.log("Data insert ok!");
+        }
+      );
     });
   });
 });
@@ -38,6 +48,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 app.use("/user", userRouter);
+app.use("/post", chatRouter);
 
 app.listen(PORT, () => {
   console.log(`server : http://localhost:${PORT}`);

@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 export const checkToken = (req, res, next) => {
-  let token = req.headers["access-token"];
+  let token = req.headers["x-access-token"];
   if (!token) {
     return res.status(400).json({
       status: 400,
