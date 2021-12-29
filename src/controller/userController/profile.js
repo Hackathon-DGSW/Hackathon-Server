@@ -1,3 +1,5 @@
+import connection from "../../db";
+
 export const userProfile = async (req, res) => {
   const { name, major, id, job } = req.user;
   try {
