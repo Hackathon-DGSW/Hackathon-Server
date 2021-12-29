@@ -3,6 +3,7 @@ import userRouter from "./router/userRouter";
 import http from "http";
 import SocketIO from "socket.io";
 import { checkToken } from "./middleware";
+import cors from "cors";
 
 const app = express();
 const PORT = 9080;
@@ -34,6 +35,7 @@ app.get("/chat", checkToken, (req, res) => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 app.use("/user", userRouter);
 

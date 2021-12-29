@@ -49,7 +49,7 @@ export const userJoin = async (req, res) => {
     console.log(err);
     return res.status(500).json({
       status: 500,
-      message: "회원가입 실패! 다시 회원가입 해주세요.",
+      message: "회원가입 실패! 다시 시도 해주세요.",
     });
   }
 };
