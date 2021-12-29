@@ -6,6 +6,7 @@ import { checkToken } from "./middleware";
 import cors from "cors";
 import connection from "./db";
 import chatRouter from "./router/chatRouter";
+import listRouter from "./router/listRouter";
 
 const app = express();
 const PORT = 9000;
@@ -33,6 +34,7 @@ app.use(cors());
 
 app.use("/user", userRouter);
 app.use("/post", chatRouter);
+app.use("/list", listRouter);
 
 io.on("connection", (socket) => {
   console.log("connect");
@@ -54,8 +56,9 @@ io.on("connection", (socket) => {
         console.log("insert success!!");
       }
     );
-    socket.to(data.roomName).emit("to_message", data.name, data.msg);
-    done();
+    console.log(data);
+    // done();
+    // socket.to(data.roomName).emit("to_message", data.name, data.msg);
   });
 });
 

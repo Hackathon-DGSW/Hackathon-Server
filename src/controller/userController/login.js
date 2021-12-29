@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 
 export const userLogin = async (req, res) => {
   const { id, password } = req.body;
+  let names;
   try {
     let query = "select * from user_info where user_id='" + id + "'";
     connection.query(query, (err, result) => {
@@ -14,6 +15,7 @@ export const userLogin = async (req, res) => {
         job: result[0].user_job,
         major: result[0].user_major,
       };
+      names = user.name;
       if (user.id !== id) {
         return res.status(400).json({
           status: 400,
@@ -44,6 +46,8 @@ export const userLogin = async (req, res) => {
       return res.status(200).json({
         status: 200,
         message: "로그인 성공!",
+        id,
+        names,
         token,
       });
     });

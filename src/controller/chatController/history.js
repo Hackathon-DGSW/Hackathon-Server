@@ -9,8 +9,9 @@ export const chatHistory = (req, res) => {
       (err, result) => {
         if (err) console.log(err);
         let roomList = [];
-        result.forEach((roomName, index) => {
-          roomList.push(result[index].roomName);
+        result.forEach((ele, index) => {
+          roomList.push(result[index].room);
+          index++;
         });
         console.log(roomList);
         return res.status(200).json({

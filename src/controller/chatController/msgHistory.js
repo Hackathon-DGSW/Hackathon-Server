@@ -2,7 +2,7 @@ import connection from "../../db";
 
 export const msgHistory = (req, res) => {
   const { name } = req.user;
-  const { roomName } = req.query;
+  const { roomName } = req.body;
   try {
     connection.query(
       "select * from chat where room=?",
@@ -15,6 +15,7 @@ export const msgHistory = (req, res) => {
             userName: name,
             msg: result[index].msg,
           });
+          index++;
         });
         console.log(msgList);
         return res.status(200).json({
