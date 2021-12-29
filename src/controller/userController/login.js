@@ -39,9 +39,6 @@ export const userLogin = async (req, res) => {
           issuer: "hackathon",
         }
       );
-      console.log("login ok!");
-      console.log(`id : ${id} / password : ${password}`);
-      console.log(`token : ${token}`);
       return res.status(200).json({
         status: 200,
         message: "로그인 성공!",
@@ -49,7 +46,6 @@ export const userLogin = async (req, res) => {
       });
     });
   } catch (err) {
-    console.log(err);
     return res.status(500).json({
       status: 500,
       message: "로그인 실패! 다시 로그인 해주세요.",
