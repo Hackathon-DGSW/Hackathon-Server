@@ -10,6 +10,8 @@ export const userLogin = async (req, res) => {
         id: result[0].user_id,
         pw: result[0].user_pw,
         name: result[0].user_name,
+        job: result[0].user_job,
+        major: result[0].user_major,
       };
       if (user.id !== id) {
         return res.status(400).json({
@@ -28,6 +30,8 @@ export const userLogin = async (req, res) => {
           id: user.id,
           name: user.name,
           pw: user.pw,
+          major: user.major,
+          job: user.job,
         },
         process.env.JWT_SECRET,
         {
@@ -41,7 +45,6 @@ export const userLogin = async (req, res) => {
         token,
       });
     });
-    console.log("login ok!");
   } catch (err) {
     console.log(err);
     return res.status(500).json({

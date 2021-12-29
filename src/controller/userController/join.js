@@ -1,7 +1,7 @@
 import connection from "../../db";
 
 export const userJoin = async (req, res) => {
-  const { name, id, password, password2 } = req.body;
+  const { name, id, password, password2, major, job } = req.body;
   let idid;
   try {
     if (password !== password2) {
@@ -19,12 +19,16 @@ export const userJoin = async (req, res) => {
         }
         if (result.length == 0) {
           let joinQuery =
-            "insert into user_info(user_id, user_pw, user_name) value('" +
+            "insert into user_info(user_id, user_pw, user_name, user_major, user_job) value('" +
             id +
             "', '" +
             password +
             "', '" +
             name +
+            "', '" +
+            major +
+            "', '" +
+            job +
             "')";
           connection.query(joinQuery, (err, result) => {
             if (err) console.log(err);
