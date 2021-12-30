@@ -45,13 +45,16 @@ io.on("connection", (socket) => {
       enter_user: data.name,
       mento_name: data.mento,
     });
-    done();
+    // done();
   });
   socket.on("come_out", (data) => {
     socket.leave(data.roomName);
     socket.to(data.roomName).emit("user_out", user_name);
   });
   socket.on("send_message", (data, done) => {
+    const roomName = data.roomName;
+    const userName = data.name;
+    const msg = data.msg;
     connection.query(
       "insert into chat(room, name, msg) value(?, ?, ?)",
       [data.roomName, data.name, data.msg],
@@ -61,8 +64,11 @@ io.on("connection", (socket) => {
       }
     );
     console.log(data);
-    socket.to(data.roomName).emit("to_message", data.name, data.msg);
-    done();
+    socket.to(roomName).emit("to_message", {
+      user_name: userName,
+      user_msg: msg,
+    });
+    // done();
   });
 });
 
