@@ -21,12 +21,12 @@ app.get("/", (req, res) => {
   res.send("");
 });
 
-let user_name;
+// let user_name;
 
-app.post("/chat", checkToken, (req, res) => {
-  const { name } = req.user;
-  user_name = name;
-});
+// app.post("/chat", checkToken, (req, res) => {
+//   const { name } = req.user;
+//   user_name = name;
+// });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -39,8 +39,12 @@ app.use("/list", listRouter);
 io.on("connection", (socket) => {
   console.log("connect");
   socket.on("come_in", (data, done) => {
+    console.log(data);
     socket.join(data.roomName);
-    socket.to(data.roomName).emit("user_in", user_name);
+    socket.to(data.roomName).emit("user_names", {
+      enter_user: data.name,
+      mento_name: data.mento,
+    });
     done();
   });
   socket.on("come_out", (data) => {
@@ -57,8 +61,8 @@ io.on("connection", (socket) => {
       }
     );
     console.log(data);
-    // done();
-    // socket.to(data.roomName).emit("to_message", data.name, data.msg);
+    socket.to(data.roomName).emit("to_message", data.name, data.msg);
+    done();
   });
 });
 

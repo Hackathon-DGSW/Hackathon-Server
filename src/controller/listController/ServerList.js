@@ -8,8 +8,10 @@ export const serverList = (req, res) => {
       let userArray = [];
       result.forEach((user, index) => {
         if (
-          result[index].user_job === "취업생" &&
-          result[index].user_major === "Server"
+          (result[index].user_job === "취업생" &&
+            result[index].user_major === "Server") ||
+          result[index].user_major === "SERVER" ||
+          result[index].user_major === "server"
         ) {
           userArray.push({
             id: result[index].user_id,

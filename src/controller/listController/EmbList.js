@@ -8,8 +8,10 @@ export const embList = (req, res) => {
       let userArray = [];
       result.forEach((user, index) => {
         if (
-          result[index].user_job === "취업생" &&
-          result[index].user_major === "Embedded"
+          (result[index].user_job === "취업생" &&
+            result[index].user_major === "Embedded") ||
+          result[index].user_major === "EMBEDDED" ||
+          result[index].user_major === "embedded"
         ) {
           userArray.push({
             id: result[index].user_id,

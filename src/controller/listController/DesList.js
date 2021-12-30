@@ -8,8 +8,10 @@ export const designList = (req, res) => {
       let userArray = [];
       result.forEach((user, index) => {
         if (
-          result[index].user_job === "취업생" &&
-          result[index].user_major === "Design"
+          (result[index].user_job === "취업생" &&
+            result[index].user_major === "Design") ||
+          result[index].user_major === "DESIGN" ||
+          result[index].user_major === "design"
         ) {
           userArray.push({
             id: result[index].user_id,
